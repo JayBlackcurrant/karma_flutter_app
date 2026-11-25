@@ -49,7 +49,8 @@ mixin ValidationMixin {
     if (value!.length < 8) {
       return 'Use at least 8 characters';
     }
-    if (!RegExp('[A-Za-z]').hasMatch(value) || !RegExp('[0-9]').hasMatch(value)) {
+    if (!RegExp('[A-Za-z]').hasMatch(value) ||
+        !RegExp('[0-9]').hasMatch(value)) {
       return 'Use letters and numbers';
     }
     return null;

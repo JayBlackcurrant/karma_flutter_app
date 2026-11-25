@@ -91,8 +91,9 @@ class _SignInPageState extends ConsumerState<SignInPage> with ValidationMixin {
                             decoration: InputDecoration(
                               hintText: '••••••••',
                               suffixIcon: IconButton(
-                                tooltip:
-                                    _obscure ? 'Show password' : 'Hide password',
+                                tooltip: _obscure
+                                    ? 'Show password'
+                                    : 'Hide password',
                                 onPressed: () =>
                                     setState(() => _obscure = !_obscure),
                                 icon: Icon(

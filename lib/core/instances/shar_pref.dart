@@ -52,7 +52,8 @@ class SharedPref extends _$SharedPref {
 
   String getToken() => _token;
 
-  Future<bool> setTheme(String mode) => _pref.setString(StorageKeys.theme, mode);
+  Future<bool> setTheme(String mode) =>
+      _pref.setString(StorageKeys.theme, mode);
 
   String getTheme() => _pref.getString(StorageKeys.theme) ?? '';
 

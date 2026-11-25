@@ -20,8 +20,9 @@ extension NumExtension on num {
   }
 
   /// 8.75 → "8.75", 6.0 → "6" — leave balances and ratings.
-  String get compact =>
-      this == truncate() ? truncate().toString() : toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
+  String get compact => this == truncate()
+      ? truncate().toString()
+      : toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
 
   /// 465 → "7h 45m" — attendance minutes.
   String get minutesToHours {

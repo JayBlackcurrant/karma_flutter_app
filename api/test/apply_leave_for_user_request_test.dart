@@ -28,14 +28,14 @@ void main() {
       // TODO
     });
 
-    // YYYY-MM-DD
-    // String from
+    // epoch ms of the start day (local midnight) - the web sends moment().valueOf()
+    // int from
     test('to test the property `from`', () async {
       // TODO
     });
 
-    // YYYY-MM-DD
-    // String to
+    // epoch ms of the end day (local midnight)
+    // int to
     test('to test the property `to`', () async {
       // TODO
     });

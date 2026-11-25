@@ -14,7 +14,8 @@ class LoggingInterceptor extends Interceptor {
     [
       'x------------------------------',
       '${options.method} ${options.uri}',
-      if (options.queryParameters.isNotEmpty) 'Query : ${options.queryParameters}',
+      if (options.queryParameters.isNotEmpty)
+        'Query : ${options.queryParameters}',
       'Headers : $headers',
       if (options.data != null) 'Data : ${options.data}',
       '------------------------------x',

@@ -41,6 +41,21 @@ extension LeaveExt on Leave {
   bool get unpaid => isUnpaid == 1;
   bool get isPending => status == LeaveStatus.requested;
   bool get isSingleDay => from.isSameDay(to);
+
+  /// Days to show in the Count column. Paid WFH is stored as 0.25 per day, so
+  /// the web multiplies it back up; unpaid WFH and other types are as-is.
+  num get displayCount {
+    final c = count ?? 0;
+    return type == LeaveType.workFromHome && !unpaid ? c / 0.25 : c;
+  }
+
+  /// "Nov 25, 2026" or "Nov 24, 2026 – Nov 26, 2026".
+  String get dateLabel =>
+      isSingleDay ? from.mdy() : '${from.mdy()} – ${to.mdy()}';
+}
+
+extension LeaveReasonExt on LeaveReason {
+  String get label => value;
 }
 
 extension NoticeExt on Notice {

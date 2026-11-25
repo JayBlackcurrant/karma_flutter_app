@@ -48,21 +48,21 @@ class ApplyLeaveRequest {
   )
   String? description;
 
-  /// YYYY-MM-DD
+  /// epoch ms of the start day (local midnight) - the web sends moment().valueOf()
   @JsonKey(
     name: r'from',
     required: true,
     includeIfNull: false,
   )
-  String from;
+  int from;
 
-  /// YYYY-MM-DD
+  /// epoch ms of the end day (local midnight)
   @JsonKey(
     name: r'to',
     required: true,
     includeIfNull: false,
   )
-  String to;
+  int to;
 
   @override
   bool operator ==(Object other) =>

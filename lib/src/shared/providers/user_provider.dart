@@ -15,11 +15,8 @@ class User extends _$User {
 
   /// Throws an `AppException` so AuthGuard can tell 401 from offline.
   Future<AuthUser> fetch() async {
-    final user = await ref
-        .read(apiProvider)
-        .getAuthApi()
-        .getRole()
-        .guard<AuthUser>();
+    final user =
+        await ref.read(apiProvider).getAuthApi().getRole().guard<AuthUser>();
     state = user;
     return user;
   }

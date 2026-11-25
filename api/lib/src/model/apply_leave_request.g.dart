@@ -25,8 +25,8 @@ ApplyLeaveRequest _$ApplyLeaveRequestFromJson(Map<String, dynamic> json) =>
               (v) => $enumDecode(_$LeaveTypeEnumMap, v,
                   unknownValue: LeaveType.unknownDefaultOpenApi)),
           description: $checkedConvert('description', (v) => v as String?),
-          from: $checkedConvert('from', (v) => v as String),
-          to: $checkedConvert('to', (v) => v as String),
+          from: $checkedConvert('from', (v) => (v as num).toInt()),
+          to: $checkedConvert('to', (v) => (v as num).toInt()),
         );
         return val;
       },

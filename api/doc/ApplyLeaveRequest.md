@@ -11,8 +11,8 @@ Name | Type | Description | Notes
 **reason** | [**LeaveReason**](LeaveReason.md) |  | 
 **type** | [**LeaveType**](LeaveType.md) |  | 
 **description** | **String** |  | [optional] 
-**from** | **String** | YYYY-MM-DD | 
-**to** | **String** | YYYY-MM-DD | 
+**from** | **int** | epoch ms of the start day (local midnight) - the web sends moment().valueOf() | 
+**to** | **int** | epoch ms of the end day (local midnight) | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -76,7 +76,8 @@ class Session extends _$Session with ActionMixin {
     }
     _expiring = true;
     try {
-      'Session expired. Please sign in again.'.toToast(type: SnackBarType.error);
+      'Session expired. Please sign in again.'
+          .toToast(type: SnackBarType.error);
       await _signOut();
     } finally {
       _expiring = false;

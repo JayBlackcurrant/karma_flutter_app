@@ -901,8 +901,8 @@ components:
         reason: { $ref: '#/components/schemas/LeaveReason' }
         type: { $ref: '#/components/schemas/LeaveType' }
         description: { type: string }
-        from: { type: string, description: 'YYYY-MM-DD' }
-        to: { type: string, description: 'YYYY-MM-DD' }
+        from: { type: integer, format: int64, description: epoch ms of the start day (local midnight) - the web sends moment().valueOf() }
+        to: { type: integer, format: int64, description: epoch ms of the end day (local midnight) }
     ApplyLeaveForUserRequest:
       type: object
       required: [EmployeeId, reason, type, from, to]
@@ -911,8 +911,8 @@ components:
         reason: { $ref: '#/components/schemas/LeaveReason' }
         type: { $ref: '#/components/schemas/LeaveType' }
         description: { type: string }
-        from: { type: string, description: 'YYYY-MM-DD' }
-        to: { type: string, description: 'YYYY-MM-DD' }
+        from: { type: integer, format: int64, description: epoch ms of the start day (local midnight) - the web sends moment().valueOf() }
+        to: { type: integer, format: int64, description: epoch ms of the end day (local midnight) }
     MarkLeaveRequest:
       type: object
       required: [status]
