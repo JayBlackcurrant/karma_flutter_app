@@ -1,0 +1,62 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'apply_leave_for_user_request.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+ApplyLeaveForUserRequest _$ApplyLeaveForUserRequestFromJson(
+        Map<String, dynamic> json) =>
+    $checkedCreate(
+      'ApplyLeaveForUserRequest',
+      json,
+      ($checkedConvert) {
+        $checkKeys(
+          json,
+          requiredKeys: const ['EmployeeId', 'reason', 'type', 'from', 'to'],
+        );
+        final val = ApplyLeaveForUserRequest(
+          employeeId: $checkedConvert('EmployeeId', (v) => (v as num).toInt()),
+          reason: $checkedConvert(
+              'reason',
+              (v) => $enumDecode(_$LeaveReasonEnumMap, v,
+                  unknownValue: LeaveReason.unknownDefaultOpenApi)),
+          type: $checkedConvert(
+              'type',
+              (v) => $enumDecode(_$LeaveTypeEnumMap, v,
+                  unknownValue: LeaveType.unknownDefaultOpenApi)),
+          description: $checkedConvert('description', (v) => v as String?),
+          from: $checkedConvert('from', (v) => v as String),
+          to: $checkedConvert('to', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'employeeId': 'EmployeeId'},
+    );
+
+Map<String, dynamic> _$ApplyLeaveForUserRequestToJson(
+        ApplyLeaveForUserRequest instance) =>
+    <String, dynamic>{
+      'EmployeeId': instance.employeeId,
+      'reason': _$LeaveReasonEnumMap[instance.reason]!,
+      'type': _$LeaveTypeEnumMap[instance.type]!,
+      if (instance.description case final value?) 'description': value,
+      'from': instance.from,
+      'to': instance.to,
+    };
+
+const _$LeaveReasonEnumMap = {
+  LeaveReason.sick: 'Sick',
+  LeaveReason.casual: 'Casual',
+  LeaveReason.other: 'Other',
+  LeaveReason.unknownDefaultOpenApi: 'unknown_default_open_api',
+};
+
+const _$LeaveTypeEnumMap = {
+  LeaveType.firstHalf: 'First Half',
+  LeaveType.secondHalf: 'Second Half',
+  LeaveType.fullDay: 'Full Day',
+  LeaveType.workFromHome: 'Work From Home',
+  LeaveType.unknownDefaultOpenApi: 'unknown_default_open_api',
+};

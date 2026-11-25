@@ -1,0 +1,1126 @@
+openapi: 3.0.3
+info:
+  title: Karma API
+  version: 1.0.0
+  description: >
+    Hand-written from the reverse-engineered Karma web client
+    (see ../KARMA_REVERSE_ENGINEERING.md). The backend does not publish a
+    spec, so keep this file in sync by hand and regenerate the `api` package
+    with ./dart-api-generator.sh.
+servers:
+  - url: https://api.karma.blackcurrantlabs.com/production
+security:
+  - Token: []
+
+tags:
+  - name: Auth
+  - name: Notice
+  - name: Kudos
+  - name: Employee
+  - name: Leave
+  - name: Holiday
+  - name: Appraisal
+  - name: Payment
+  - name: Attendance
+  - name: Setting
+  - name: FestivalHunt
+
+paths:
+  # ───────────────────────── Auth ─────────────────────────
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+  /auth/getRole:
+    get:
+      tags: [Auth]
+      operationId: getRole
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthUser' }
+  /auth/forgotPassword:
+    post:
+      tags: [Auth]
+      operationId: forgotPassword
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ForgotPasswordRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /auth/verifyUuid/{uuid}:
+    get:
+      tags: [Auth]
+      operationId: verifyUuid
+      security: []
+      parameters:
+        - { name: uuid, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /auth/updatePassword/{uuid}:
+    put:
+      tags: [Auth]
+      operationId: updatePassword
+      security: []
+      parameters:
+        - { name: uuid, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdatePasswordRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+
+  # ───────────────────────── Notice ─────────────────────────
+  /notice:
+    get:
+      tags: [Notice]
+      operationId: getNotices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Notice' }
+    post:
+      tags: [Notice]
+      operationId: addNotice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NoticeRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /notice/{id}:
+    put:
+      tags: [Notice]
+      operationId: editNotice
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NoticeRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+    delete:
+      tags: [Notice]
+      operationId: deleteNotice
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /notice/{id}/acknowledge:
+    post:
+      tags: [Notice]
+      operationId: acknowledgeNotice
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /notice/{id}/acknowledgements:
+    get:
+      tags: [Notice]
+      operationId: getNoticeAcknowledgements
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NoticeAcknowledgements' }
+
+  # ───────────────────────── Kudos ─────────────────────────
+  /kudos:
+    get:
+      tags: [Kudos]
+      operationId: getKudosWall
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 60 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Kudos' }
+    post:
+      tags: [Kudos]
+      operationId: giveKudos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/KudosRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Kudos' }
+  /kudos/{id}:
+    delete:
+      tags: [Kudos]
+      operationId: removeKudos
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /kudos/colleagues:
+    get:
+      tags: [Kudos]
+      operationId: getColleagues
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Colleague' }
+  /kudos/received/{employeeId}:
+    get:
+      tags: [Kudos]
+      operationId: getKudosReceived
+      parameters:
+        - { name: employeeId, in: path, required: true, schema: { type: integer } }
+        - { name: from, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+        - { name: to, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Kudos' }
+
+  # ───────────────────────── Employee ─────────────────────────
+  /employee:
+    get:
+      tags: [Employee]
+      operationId: getAllEmployeeDetails
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Employee' }
+    post:
+      tags: [Employee]
+      operationId: createEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Employee' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /employee/{id}:
+    get:
+      tags: [Employee]
+      operationId: getEmployeeDetails
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Employee' }
+    put:
+      tags: [Employee]
+      operationId: editEmployee
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Employee' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /employee/events:
+    get:
+      tags: [Employee]
+      operationId: getEmployeeEvents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EmployeeEvents' }
+  /employee/get-absent-employees:
+    get:
+      tags: [Employee]
+      operationId: getAbsentEmployees
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AbsentEmployee' }
+
+  # ───────────────────────── Leave ─────────────────────────
+  /leave:
+    get:
+      tags: [Leave]
+      operationId: getLeaves
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LeaveSummary' }
+    post:
+      tags: [Leave]
+      operationId: applyForLeave
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ApplyLeaveRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /leave/cancel-leave:
+    delete:
+      tags: [Leave]
+      operationId: cancelLeave
+      parameters:
+        - { name: leaveId, in: query, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /leave/getPastRecords:
+    get:
+      tags: [Leave]
+      operationId: getPastRecords
+      parameters:
+        - { name: year, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Leave' }
+  /leave/getPendingRecords:
+    get:
+      tags: [Leave]
+      operationId: getPendingLeaves
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Leave' }
+  /leave/apply_for_user:
+    post:
+      tags: [Leave]
+      operationId: applyLeaveForUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ApplyLeaveForUserRequest' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /leave/{id}:
+    post:
+      tags: [Leave]
+      operationId: markLeave
+      description: Approve / reject. `id` is the employee id (inferred from the web client).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: leaveId, in: query, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarkLeaveRequest' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+    delete:
+      tags: [Leave]
+      operationId: refundLeave
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+
+  # ───────────────────────── Holiday ─────────────────────────
+  /holiday:
+    get:
+      tags: [Holiday]
+      operationId: getHolidays
+      parameters:
+        - { name: startDate, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+        - { name: endDate, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Holiday' }
+  /holiday/number-of-working-days:
+    get:
+      tags: [Holiday]
+      operationId: getNumberOfWorkingDays
+      parameters:
+        - { name: startDate, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+        - { name: endDate, in: query, schema: { type: string, description: 'YYYY-MM-DD' } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /holiday/add_holiday:
+    post:
+      tags: [Holiday]
+      operationId: addHoliday
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HolidayRequest' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+  /holiday/{id}:
+    delete:
+      tags: [Holiday]
+      operationId: deleteHoliday
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+
+  # ───────────────────────── Appraisal ─────────────────────────
+  /appraisal/my:
+    get:
+      tags: [Appraisal]
+      operationId: getMyAppraisals
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Appraisal' }
+  /appraisal/{id}:
+    get:
+      tags: [Appraisal]
+      operationId: getAppraisal
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appraisal' }
+  /appraisal/{id}/answers:
+    get:
+      tags: [Appraisal]
+      operationId: getAppraisalAnswers
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppraisalAnswers' }
+    put:
+      tags: [Appraisal]
+      operationId: saveAppraisalAnswers
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SaveAnswersRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Appraisal' }
+  /appraisal/cycles:
+    get:
+      tags: [Appraisal]
+      operationId: getAppraisalCycles
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AppraisalCycle' }
+
+  # ───────────────────────── Payment ─────────────────────────
+  /payment/get-user-payments:
+    get:
+      tags: [Payment]
+      operationId: getUserPayments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Payment' }
+  /payment/get-download-link/{id}:
+    get:
+      tags: [Payment]
+      operationId: getSlipDownloadLink
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DownloadLink' }
+
+  # ───────────────────────── Attendance ─────────────────────────
+  /attendance/my:
+    get:
+      tags: [Attendance]
+      operationId: getMyMonths
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AttendanceMonth' }
+  /attendance/my/{month}:
+    get:
+      tags: [Attendance]
+      operationId: getMyReport
+      parameters:
+        - { name: month, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AttendanceReport' }
+
+  # ───────────────────────── Setting ─────────────────────────
+  /setting/list_settings:
+    get:
+      tags: [Setting]
+      operationId: getSettings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Settings' }
+  /setting/update_settings:
+    patch:
+      tags: [Setting]
+      operationId: updateSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Settings' }
+      responses:
+        '200':
+          description: OK (admin)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Settings' }
+
+  # ───────────────────────── Festival hunt ─────────────────────────
+  /festival-hunt/theme:
+    get:
+      tags: [FestivalHunt]
+      operationId: getFestivalTheme
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FestivalThemeResponse' }
+  /festival-hunt/active:
+    get:
+      tags: [FestivalHunt]
+      operationId: getActiveHunt
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActiveHuntResponse' }
+
+components:
+  securitySchemes:
+    Token:
+      type: apiKey
+      in: header
+      name: Token
+
+  schemas:
+    # ── common ──
+    MessageResponse:
+      type: object
+      properties:
+        message: { type: string }
+    DownloadLink:
+      type: object
+      properties:
+        link: { type: string }
+
+    # ── auth ──
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string }
+        password: { type: string }
+    LoginResponse:
+      type: object
+      properties:
+        token: { type: string }
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string }
+    UpdatePasswordRequest:
+      type: object
+      required: [password]
+      properties:
+        password: { type: string }
+    AuthUser:
+      type: object
+      properties:
+        employeeId: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { $ref: '#/components/schemas/Role' }
+        iat: { type: integer }
+        exp: { type: integer }
+    Role:
+      type: string
+      enum: [Employee, ADMIN]
+
+    # ── notice ──
+    Notice:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        expirationDate:
+          nullable: true
+          description: ISO date string or epoch ms (sent as epoch ms) - parse with NoticeExt.expiresOn
+        acknowledgedByMe: { type: boolean, nullable: true }
+        acknowledgedOn: { type: string, format: date-time, nullable: true }
+        acknowledgedCount: { type: integer, nullable: true }
+        activeEmployeeCount: { type: integer, nullable: true, description: admin only }
+        createdAt: { type: string, format: date-time, nullable: true }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    NoticeRequest:
+      type: object
+      required: [title, description]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        expirationDate: { type: integer, format: int64, description: epoch ms }
+    NoticeAcknowledgement:
+      type: object
+      properties:
+        id: { type: integer, nullable: true }
+        name: { type: string }
+        acknowledgedOn: { type: string, format: date-time, nullable: true }
+    NoticeAcknowledgements:
+      type: object
+      properties:
+        acknowledged:
+          type: array
+          items: { $ref: '#/components/schemas/NoticeAcknowledgement' }
+        pending:
+          type: array
+          items: { $ref: '#/components/schemas/NoticeAcknowledgement' }
+
+    # ── kudos ──
+    Kudos:
+      type: object
+      properties:
+        id: { type: integer }
+        message: { type: string }
+        createdAt: { type: string, format: date-time }
+        fromEmployeeId: { type: integer, nullable: true }
+        fromName: { type: string, nullable: true, description: null for a former colleague }
+        toEmployeeId: { type: integer, nullable: true }
+        toName: { type: string, nullable: true }
+    KudosRequest:
+      type: object
+      required: [toEmployeeId, message]
+      properties:
+        toEmployeeId: { type: integer }
+        message: { type: string, maxLength: 280 }
+    Colleague:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+
+    # ── employee ──
+    EventPerson:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        dateOfBirth: { type: string, format: date-time, nullable: true }
+        dateOfJoining: { type: string, format: date-time, nullable: true }
+        probationPeriodEndDate: { type: string, format: date-time, nullable: true }
+    EmployeeEvents:
+      type: object
+      properties:
+        todaysBirthdays:
+          type: array
+          items: { $ref: '#/components/schemas/EventPerson' }
+        todaysAnniversary:
+          type: array
+          items: { $ref: '#/components/schemas/EventPerson' }
+        upcomingBirthdays:
+          type: array
+          items: { $ref: '#/components/schemas/EventPerson' }
+        upcomingAnniversary:
+          type: array
+          items: { $ref: '#/components/schemas/EventPerson' }
+        adminEvents:
+          type: array
+          description: admin only - probations ending soon
+          items: { $ref: '#/components/schemas/EventPerson' }
+    AbsentEmployee:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        LeaveRecords:
+          type: array
+          items: { $ref: '#/components/schemas/AbsentLeaveRecord' }
+    AbsentLeaveRecord:
+      type: object
+      properties:
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        type: { $ref: '#/components/schemas/LeaveType' }
+        status: { $ref: '#/components/schemas/LeaveStatus' }
+    Employee:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+        gender: { type: string }
+        phoneNumber: { type: string }
+        emergencyContactNumber: { type: string }
+        emergencyContactRelation: { type: string }
+        bloodGroup: { type: string }
+        dateOfBirth: { type: string, format: date-time, nullable: true }
+        maritalStatus: { type: string }
+        permanentAddress: { type: string }
+        temporaryAddress: { type: string }
+        department: { type: string }
+        designation: { type: string, nullable: true }
+        dateOfJoining: { type: string, format: date-time, nullable: true }
+        probationPeriodEndDate: { type: string, format: date-time, nullable: true }
+        totalLeaves: { type: number }
+        totalWfhLeaves: { type: number }
+        status: { type: string }
+        biometricCode: { type: integer, nullable: true }
+        isPFEnabled: { type: boolean }
+        isAppraisalExempt: { type: boolean }
+        pan: { type: string, nullable: true }
+        endDate: { type: string, format: date-time, nullable: true }
+        equipmentDetails: { type: string, nullable: true }
+
+    # ── leave ──
+    LeaveReason:
+      type: string
+      enum: [Sick, Casual, Other]
+    LeaveType:
+      type: string
+      enum: [First Half, Second Half, Full Day, Work From Home]
+    LeaveStatus:
+      type: string
+      enum: [Requested, Approved, Rejected]
+    LeaveEmployee:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+    Leave:
+      type: object
+      properties:
+        id: { type: integer }
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        reason: { $ref: '#/components/schemas/LeaveReason' }
+        description: { type: string, nullable: true }
+        type: { $ref: '#/components/schemas/LeaveType' }
+        count: { type: number }
+        status: { $ref: '#/components/schemas/LeaveStatus' }
+        markedBy: { type: string, nullable: true }
+        isUnpaid: { type: number, description: '0 or 1' }
+        additionalNotes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        EmployeeId: { type: integer }
+        Employee: { $ref: '#/components/schemas/LeaveEmployee' }
+    LeaveSummary:
+      type: object
+      properties:
+        leaves:
+          type: array
+          items: { $ref: '#/components/schemas/Leave' }
+        paidLeavesRemaining: { type: number }
+        unpaidLeavesTaken: { type: number }
+        totalLeaves: { type: number }
+        wfhleavesRemaining: { type: number }
+        totalWFHLeaves: { type: number }
+    ApplyLeaveRequest:
+      type: object
+      required: [reason, type, from, to]
+      properties:
+        reason: { $ref: '#/components/schemas/LeaveReason' }
+        type: { $ref: '#/components/schemas/LeaveType' }
+        description: { type: string }
+        from: { type: string, description: 'YYYY-MM-DD' }
+        to: { type: string, description: 'YYYY-MM-DD' }
+    ApplyLeaveForUserRequest:
+      type: object
+      required: [EmployeeId, reason, type, from, to]
+      properties:
+        EmployeeId: { type: integer }
+        reason: { $ref: '#/components/schemas/LeaveReason' }
+        type: { $ref: '#/components/schemas/LeaveType' }
+        description: { type: string }
+        from: { type: string, description: 'YYYY-MM-DD' }
+        to: { type: string, description: 'YYYY-MM-DD' }
+    MarkLeaveRequest:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: '#/components/schemas/LeaveStatus' }
+        count: { type: number }
+        isUnpaid: { type: number }
+        additionalNotes: { type: string }
+
+    # ── holiday ──
+    Holiday:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        date: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    HolidayRequest:
+      type: object
+      required: [name, date]
+      properties:
+        name: { type: string }
+        date: { type: string, description: 'YYYY-MM-DD' }
+
+    # ── appraisal ──
+    CycleStatus:
+      type: string
+      enum: [Draft, Self Assessment Open, Self Assessment Closed, Rating, Calculated, Locked, Paid]
+    QuestionType:
+      type: string
+      enum: [LONG_TEXT, SHORT_TEXT, RATING_10, NUMBER, SINGLE_SELECT]
+    AppraisalCycle:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        cycleType: { type: string }
+        financialYear: { type: string }
+        periodStart: { type: string, format: date-time }
+        periodEnd: { type: string, format: date-time }
+        monthsInWindow: { type: number }
+        cycleCloseDate: { type: string, format: date-time, nullable: true }
+        selfAssessmentOpensOn: { type: string, format: date-time, nullable: true }
+        selfAssessmentClosesOn: { type: string, format: date-time, nullable: true }
+        status: { $ref: '#/components/schemas/CycleStatus' }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    Appraisal:
+      type: object
+      properties:
+        id: { type: integer }
+        AppraisalCycleId: { type: integer }
+        EmployeeId: { type: integer }
+        employeeName: { type: string }
+        state: { type: string }
+        selfSubmittedOn: { type: string, format: date-time, nullable: true }
+        eligibleForBonus: { type: boolean, nullable: true }
+        averageRawRating: { type: number, nullable: true }
+        finalBonus: { type: number, nullable: true }
+        AppraisalCycle: { $ref: '#/components/schemas/AppraisalCycle' }
+    AppraisalQuestion:
+      type: object
+      properties:
+        id: { type: integer }
+        questionKey: { type: string, nullable: true }
+        questionText: { type: string }
+        helpText: { type: string, nullable: true }
+        questionType: { $ref: '#/components/schemas/QuestionType' }
+        isRequired: { type: boolean }
+        options:
+          type: array
+          nullable: true
+          items: { type: string }
+    AppraisalAnswer:
+      type: object
+      properties:
+        AppraisalQuestionId: { type: integer }
+        answerText: { type: string, nullable: true }
+        answerNumber: { type: number, nullable: true }
+    AppraisalAnswers:
+      type: object
+      properties:
+        questions:
+          type: array
+          items: { $ref: '#/components/schemas/AppraisalQuestion' }
+        answers:
+          type: array
+          items: { $ref: '#/components/schemas/AppraisalAnswer' }
+    SaveAnswersRequest:
+      type: object
+      required: [answers, submit]
+      properties:
+        answers:
+          type: array
+          items: { $ref: '#/components/schemas/AppraisalAnswer' }
+        submit: { type: boolean }
+
+    # ── payment ──
+    Payment:
+      type: object
+      properties:
+        id: { type: integer }
+        amount: { type: number }
+        date: { type: string, format: date-time }
+        description: { type: string, nullable: true }
+        structure: { type: string, nullable: true, description: JSON-encoded breakdown }
+        TDS: { type: number, nullable: true }
+        category: { type: string }
+        paymentForDate: { type: string, format: date-time }
+        slipS3Link: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        EmployeeId: { type: integer }
+
+    # ── attendance ──
+    AttendanceSummary:
+      type: object
+      properties:
+        workingDays: { type: number }
+        presentDays: { type: number }
+        wfhDays: { type: number }
+        leaveDays: { type: number }
+        holidays: { type: number }
+        totalMinutes: { type: number }
+        averageMinutes: { type: number }
+        late: { type: number }
+        short: { type: number }
+        missingPunch: { type: number }
+        unexplained: { type: number }
+        pendingLeave: { type: number }
+        kudos: { type: number }
+        warnings: { type: number }
+        notes: { type: number }
+        excused: { type: number }
+    AttendanceMonth:
+      type: object
+      properties:
+        month: { type: string }
+        label: { type: string }
+        fileName: { type: string, nullable: true }
+        dataUntil: { type: string, format: date-time, nullable: true }
+        uploadedBy: { type: string, nullable: true }
+        uploadedAt: { type: string, format: date-time, nullable: true }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        emailSentAt: { type: string, format: date-time, nullable: true }
+        summary: { $ref: '#/components/schemas/AttendanceSummary' }
+    AttendanceFinding:
+      type: object
+      properties:
+        type: { type: string }
+        severity: { type: string }
+        message: { type: string }
+        excused: { type: boolean }
+        excuseId: { type: integer, nullable: true }
+        excuseNote: { type: string, nullable: true }
+        excusedBy: { type: string, nullable: true }
+    AttendanceDay:
+      type: object
+      properties:
+        date: { type: string, format: date-time }
+        weekday: { type: string }
+        in: { type: string, nullable: true }
+        out: { type: string, nullable: true }
+        minutes: { type: number, nullable: true }
+        status: { type: string }
+        workingDay: { type: boolean }
+        findings:
+          type: array
+          items: { $ref: '#/components/schemas/AttendanceFinding' }
+    AttendanceReport:
+      type: object
+      properties:
+        month: { type: string }
+        label: { type: string }
+        fileName: { type: string, nullable: true }
+        dataUntil: { type: string, format: date-time, nullable: true }
+        uploadedBy: { type: string, nullable: true }
+        uploadedAt: { type: string, format: date-time, nullable: true }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        emailSentAt: { type: string, format: date-time, nullable: true }
+        employeeId: { type: integer }
+        biometricCode: { type: integer, nullable: true }
+        nameInFile: { type: string, nullable: true }
+        summary: { $ref: '#/components/schemas/AttendanceSummary' }
+        days:
+          type: array
+          items: { $ref: '#/components/schemas/AttendanceDay' }
+
+    # ── settings ──
+    Settings:
+      type: object
+      properties:
+        allowPastLeaves: { type: boolean }
+
+    # ── festival hunt ──
+    FestivalInfo:
+      type: object
+      properties:
+        name: { type: string }
+        theme: { type: object, additionalProperties: true }
+    FestivalThemeResponse:
+      type: object
+      properties:
+        festival:
+          allOf: [{ $ref: '#/components/schemas/FestivalInfo' }]
+          nullable: true
+    ActiveHuntResponse:
+      type: object
+      properties:
+        hunt: { type: object, additionalProperties: true, nullable: true }
