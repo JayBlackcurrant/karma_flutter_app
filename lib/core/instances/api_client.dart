@@ -24,6 +24,7 @@ models.Api api(Ref ref) {
     dio: DioInstance(
       baseUrl: config.env.baseUrl,
       version: version,
+      forceAdminRole: config.env.forceAdminRole,
       tokenInterceptor: TokenInterceptor(
         getToken: () => ref.mounted ? ref.read(tokenProvider) : '',
       ),
