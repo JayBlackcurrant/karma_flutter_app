@@ -9,10 +9,6 @@ abstract class AppEnv {
 
   /// Shown on the splash / about screen so testers know which build they run.
   late final String label;
-
-  /// DEV: pretend the signed-in user is an admin (RoleOverrideInterceptor).
-  /// Only honoured in debug builds; keep it false for production.
-  late final bool forceAdminRole;
 }
 
 class ProductionEnv implements AppEnv {
@@ -24,9 +20,6 @@ class ProductionEnv implements AppEnv {
 
   @override
   String label = 'Production';
-
-  @override
-  bool forceAdminRole = true;
 }
 
 class StagingEnv implements AppEnv {
@@ -41,12 +34,4 @@ class StagingEnv implements AppEnv {
 
   @override
   String label = 'Staging';
-
-  /// On while the admin screens are being built. Turn off to test as the
-  /// account's real role, or with `--dart-define=FORCE_ADMIN=false`.
-  @override
-  bool forceAdminRole = const bool.fromEnvironment(
-    'FORCE_ADMIN',
-    defaultValue: true,
-  );
 }
